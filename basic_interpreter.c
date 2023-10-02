@@ -1,43 +1,42 @@
-/* Basic Interpreter by H�seyin Uslu raistlinthewiz@hotmail.com */
+/* Basic Interpreter by Hüseyin Uslu raistlinthewiz@hotmail.com */
 /* Code licenced under GPL */
 
 
-#include <stdio.h>
-#include <conio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <ctype.h>
+#include <stdio.h>								//표준 입출력 함수를 사용할 수 있도록 해주는 헤더 파일
+#include <conio.h>								//콘솔 입출력 함수를 사용할 수 있도록 해주는 헤더 파일	
+#include <string.h>								//문자열 처리 함수를 사용할 수 있도록 해주는 헤더 파일
+#include <stdlib.h>								//일반적인 유틸리티 함수를 사용할 수 있도록 해주는 헤더 파일
+#include <ctype.h>								//문자형(char) 데이터와 관련된 함수들을 사용할 수 있도록 해주는 헤더 파일
 
-struct node{
-	int type;
-/* system stack-> 1 for variable, 2 for function , 3 for function call
+struct node{									//struct node라는 구조체 정의
+	int type;								//int 타입의 노드 정수
+/* system stack-> 1 for variable, 2 for function , 3 for function call		//시스템 스택 값 지정 1.변수, 2.함수, 3.함수 호출, 4.시작, 5.끝
 4 for begin 5 for end */
 
-	char exp_data;
-	int val;
-	int line;
-	struct node * next;
+	char exp_data;								//변수 : 노드와 관련된 데이터를 나타내는 문자(char) exp_data지정
+	int val;								//변수 : 노드 정수값 지정 변수나 함수 호출 때 사용됨
+	int line;								//변수 : 노드가 속한 코드의 라인 번호 나타냄
+	struct node * next;							//변수 : 연결 리스트 데이터 구조를 위한 포인터 - 다음 노드를 가리키며 연결 리스트의 다음 요소를 가리킴
 
 };
 
-typedef struct node Node;
+typedef struct node Node;							//struct node 라는 구조체를 Node라는 새로운 이름으로 정의하고 선언함.
 
-struct stack{
+struct stack{									//struct stack라는 구조체를 정의하고 Node의 포인터인 top 하나만음 멤버로 가짐. 이러한 형태는 스택 자료구조를 표현함
 	Node * top;
 };
 
-typedef  struct stack Stack;
+typedef  struct stack Stack;							//struct stack을 Stack이라는 새로운 이름으로 정의하고 선언함.
 
 
-struct opnode{
-	char op;
-	struct opnode * next;
+struct opnode{									//struct opnode라는 구조체를 정의함.
+	char op;								//연산자를 나타내는 문자 
+	struct opnode * next;							//다음 노드를 가리키는 포인터이며 이 포인터를 사용하여 연결 리스트를 형성함
 };
-typedef struct opnode opNode;
+typedef struct opnode opNode;							//struct opnode를 opNode이라는 새로운 이름으로 정의하고 선언함.
 
-struct opstack{
-	opNode * top;
-};
+struct opstack{									//struct opstack이라는 구조체를 정의함
+	opNode * top;								//opNode 포인터인 top을 가지고 이 포인터는 스택의 맨 위 노드를 가리킴.
 
 typedef struct opstack OpStack;
 

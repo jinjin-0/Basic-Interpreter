@@ -182,36 +182,45 @@ return NULL;
 
 
 
-void Pop(Node * sNode,Stack *stck)
+void Pop(Node * sNode,Stack *stck)						//스택에서 요소를 팝(pop)하여 요소의 값을 sNode에 복사하는 Pop 함수의 구현,. 이 함수는 sNode에 대한 포인터와 스택 포인터 stck를 인자로 받으며, 스택에서 팝된 요소의 값을 sNode에 복사
 {
 Node *temp;
-
+	 // 스택이 비어 있는지 확인하기 위해 `stck->top`을 검사합니다.
 if (stck->top == NULL )
 {
 printf("ERROR, empty stack...");
 }
 else
 {
+	// 팝된 요소의 필드 값을 `sNode`에 복사합니다
 sNode->exp_data=stck->top->exp_data;
 sNode->type=stck->top->type;
 sNode->line=stck->top->line;
 sNode->val=stck->top->val;
+	// 현재 맨 위의 노드를 임시 포인터 'temp'에 저장
 temp=stck->top;
+	// 스택의 맨 위 노드를 다음 노드로 업데이트
 stck->top=stck->top->next;
+	// 이전 맨 위 노드의 메모리를 해제
 free(temp);
 }
 }
 
-int isStackEmpty(OpStack *stck)
+int isStackEmpty(OpStack *stck)							//isStackEmpty 함수는 스택이 비어 있는지를 확인하는 함수, OpStack 구조체 포인터를 매개변수로 받음.
 {
+	 // if 문: 스택의 'top' 멤버가 0인 경우
 	if (stck->top==0)
+		// 반환문: 스택이 비어 있지 않다면 0을 반환하여 표시합니다.
 		return 1;
+// 반환문: 스택이 비어 있지 않다면 0을 반환하여 표시합니다.
 return 0;
 }
-
-/*void printAllStack(Stack * stck)
+//주석 처리되어 실행되지않음
+/*void printAllStack(Stack * stck)						// printAllStack라는 함수를 정의 스택 내부의 데이터를 출력하는 것
 {
+	//Node 구조체의 tempNode 변수를 선언
 	Node tempNode;
+ //printf를 사용하여 스택 내부의 데이터를 출력합니다.
 	printf("\n------------------\n");
 	printf("dumping the stack...\n");
 	Pop(&tempNode,stck);

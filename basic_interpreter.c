@@ -38,118 +38,143 @@ typedef struct opnode opNode;							//struct opnode를 opNode이라는 새로운
 struct opstack{									//struct opstack이라는 구조체를 정의함
 	opNode * top;								//opNode 포인터인 top을 가지고 이 포인터는 스택의 맨 위 노드를 가리킴.
 
-typedef struct opstack OpStack;
+typedef struct opstack OpStack;							// "opstack"이라는 구조체를 "OpStack"으로 typedef합니다.
 
-struct postfixnode{
+struct postfixnode{								// "postfixnode" 구조체를 정의합니다. 이 구조체는 정수 값을 저장하고, 다음 노드를 가리키는 포인터를 가집니다.
 	int val;
 	struct postfixnode * next;
 };
 
-typedef struct postfixnode Postfixnode;
+typedef struct postfixnode Postfixnode;						// "postfixnode" 구조체를 "Postfixnode"로 typedef합니다.
 
-struct postfixstack{
+struct postfixstack{								// "postfixstack" 구조체를 정의합니다. 이 구조체는 후입선출 (LIFO) 스택을 나타냅니다. "top" 멤버는 스택의 맨 위 항목을 가리키는 포인터입니다.
 	Postfixnode * top;
 	};
 
-typedef struct postfixstack PostfixStack;
+typedef struct postfixstack PostfixStack;					// "postfixstack" 구조체를 "PostfixStack"으로 typedef합니다.
 
 
 
 
 
-int GetVal(char,int *,Stack *);
-int GetLastFunctionCall(Stack*);
+int GetVal(char,int *,Stack *);							//함수 "GetVal"를 선언하며 char,int *,Stack *를 인자로 받아 정수(int)값을 반환함
+int GetLastFunctionCall(Stack*);						//함수 "GetLastFunctionCall"를 선언하며 Stack *를 인자로 받아 정수(int)값을 반환함
+	
+Stack* FreeAll(Stack *);							//함수 "FreeAll"를 선언하며 Stack *를 인자로 받아 Stack*을 반환함
 
-Stack* FreeAll(Stack *);
-
-Stack * Push(Node sNode,Stack *stck)
+Stack * Push(Node sNode,Stack *stck)						//Push 함수를 정의하고, Node 타입의 sNode와 스택 포인터 stck를 인자로 받으며, 스택 포인터 Stack *를 반환함
 {
 Node *newnode;
-
+// 새로운 노드를 할당하고 메모리가 할당되지 않으면 오류 메시지 출력
 if ((newnode=(Node*)malloc(sizeof(Node)))==NULL) {
 printf("ERROR, Couldn't allocate memory...");
 return NULL;
 }
 else
 {
+	 // 새로운 노드에 sNode의 필드 값을 복사
 newnode->type=sNode.type;
 newnode->val=sNode.val;
 newnode->exp_data=sNode.exp_data;
 newnode->line=sNode.line;
+	   // 새로운 노드를 스택의 맨 위로 추가
 newnode->next=stck->top;
 stck->top=newnode;
+	 // 업데이트된 스택 포인터를 반환
 return stck;
 }
 }
 
-OpStack * PushOp(char op,OpStack *opstck)
+OpStack * PushOp(char op,OpStack *opstck)					//char 타입의 연산자 op와 연산자 스택 포인터 opstck를 인자로 받으며, 연산자 스택 포인터 OpStack *을 반환함
 {
 opNode *newnode;
+	  // 새로운 노드를 할당하고 메모리가 할당되지 않으면 오류 메시지 출력
 if ((newnode=(opNode*)malloc(sizeof(opNode)))==NULL) {
 printf("ERROR, Couldn't allocate memory...");
 return NULL;
 }
 else
 {
+	 // 새로운 노드에 연산자(op)를 설정
 newnode->op=op;
+	 // 새로운 노드를 연산자 스택의 맨 위에 추가
 newnode->next=opstck->top;
 opstck->top=newnode;
+	  // 업데이트된 연산자 스택 포인터를 반환
 return opstck;
 }
 }
 
-char PopOp(OpStack *opstck)
+char PopOp(OpStack *opstck)							//연산자 스택에서 연산자를 팝(pop)하는 PopOp 함수의 구현, 이 함수는 OpStack * 타입의 연산자 스택 포인터 opstck를 인자로 받으며, 팝된 연산자를 char로 반환함
 {
 opNode *temp;
 char op;
+	// 스택이 비어있는 경우
 if (opstck->top == NULL )
 {
 printf("ERROR, empty stack...");
 }
 else
 {
+	// 팝할 연산자 값을 저장
 op=opstck->top->op;
+	 // 현재 맨 위의 노드를 임시 포인터 'temp'에 저장
 temp=opstck->top;
+	  // 스택의 맨 위 노드를 다음 노드로 업데이트
 opstck->top=opstck->top->next;
+	// 이전 맨 위 노드의 메모리를 해제
 free(temp);
+	// 팝된 연산자를 반환
 return op;
 }
+	// 스택이 비어있을 경우 NULL을 반환
 return NULL;
 }
 
 
-PostfixStack * PushPostfix(int val,PostfixStack *poststck)
+PostfixStack * PushPostfix(int val,PostfixStack *poststck)			 //후위 표기식 스택에 정수를 추가하는 PushPostfix 함수의 구현, 이 함수는 int 타입의 정수 val과 후위 표기식 스택 포인터 poststck를 인자로 받으며, 후위 표기식 스택 포인터 PostfixStack *를 반환
 {
 Postfixnode *newnode;
+	// 새로운 노드를 할당하고 메모리가 할당되지 않으면 오류 메시지 출력
 if ((newnode=(Postfixnode*)malloc(sizeof(Postfixnode)))==NULL) {
 printf("ERROR, Couldn't allocate memory...");
 return NULL;
 }
 else
 {
+	        // 새로운 노드에 정수(val)를 설정
 newnode->val=val;
+	        // 새로운 노드를 후위 표기식 스택의 맨 위에 추가
 newnode->next=poststck->top;
 poststck->top=newnode;
+	// 업데이트된 후위 표기식 스택 포인터를 반환
 return poststck;
 }
 }
 
-char PopPostfix(PostfixStack *poststck)
+char PopPostfix(PostfixStack *poststck)						//후위 표기식 스택에서 정수를 팝(pop)하는 PopPostfix 함수의 구현, 이 함수는 PostfixStack * 타입의 후위 표기식 스택 포인터 poststck를 인자로 받으며, 팝된 정수를 int로 반환
 {
 Postfixnode *temp;
 int val;
+	// 스택이 비어 있는지 확인하기 위해 `poststck->top`을 검사합니다.
 if (poststck->top == NULL )
 {
 printf("ERROR, empty stack...");
 }
 else
 {
+	// 팝할 정수 값을 저장
 val=poststck->top->val;
+	// 현재 맨 위의 노드를 임시 포인터 'temp'에 저장
 temp=poststck->top;
+	// 스택의 맨 위 노드를 다음 노드로 업데이트
 poststck->top=poststck->top->next;
+	// 이전 맨 위 노드의 메모리를 해제
 free(temp);
+	// 팝된 정수 값을 반환
 return val;
 }
+	// 스택이 비어 있을 경우 NULL을 반환
 return NULL;
 }
 

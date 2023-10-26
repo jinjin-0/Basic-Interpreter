@@ -248,56 +248,56 @@ int Priotry(char operator)							//Priority 함수는 주어진 연산자의 우
 return 0;
 }
 
-int main(int argc,char ** argv)							//C 프로그램의 시작점인 main 함수, 이 함수는 커맨드 라인 매개변수(argc, argv)를 사용하여 실행됨
+int main(int argc,char ** argv)		//C 프로그램의 시작점인 main 함수, 이 함수는 커맨드 라인 매개변수(argc, argv)를 사용하여 실행됨
 {
-	char line[4096];
-	char dummy[4096];
-	char lineyedek[4096];
+	char line[4096];		//4096개의 문자로 구성된 문자열을 저장하기 위한 것
+	char dummy[4096];		//4096개의 문자로 구성된 문자열을 저장하기 위한 배열로, 임시 데이터나 중간 결과를 저장
+	char lineyedek[4096];		//다른 4096개의 문자로 구성된 문자열을 저장하는 배열로, 아마도 원래 line 배열의 백업 복사본으로 사용
 
-	char postfix[4096];
+	char postfix[4096];		//4096개의 문자로 구성된 문자열을 저장하기 위한 배열입니다. 이 배열은 아마도 후위 표기식을 저장
 
-	char * firstword;
+	char * firstword;		//문자열을 가리키는 포인터로, 아마도 line 배열의 첫 번째 단어를 가리킴
 
 
 
-//	int i;
-	int val1;
+//	int i;				//루프 또는 반복 작업에서 사용되는 카운터 또는 반복 변수로 사용,코드의 루프에서 반복 횟수를 추적하는 데 사용
+	int val1;			//프로그램의 연산 중에 두 개의 숫자 값을 저장하거나 연산 결과를 보관하는 데 사용
 	int val2;
 
 
-	int LastExpReturn;
-	int LastFunctionReturn=-999;
-	int CalingFunctionArgVal;
+	int LastExpReturn;		//변수는 이전 표현식의 결과 값을 저장하는 데 사용될 수 있음
+	int LastFunctionReturn=-999;	//이전 함수 호출의 반환 값을 저장하는 데 사용 -999의 의믜는 아직 반환값이 없음
+	int CalingFunctionArgVal;	//현재 호출된 함수에 전달된 인수(인자)의 값을 저장하는 데 사용
 
-	Node tempNode;
-
-
-	OpStack * MathStack;
-
-	FILE *filePtr;
-
-	PostfixStack * CalcStack;
-
-	int resultVal;
-
-	Stack * STACK;
-
-	int curLine=0;
-	int foundMain=0;
-        int WillBreak=0;
+	Node tempNode;			//사용자 정의된 Node 구조체를 나타내며, 프로그램에서 노드 또는 데이터 구조를 임시로 저장하는 데 사용
 
 
-	MathStack->top=NULL;
-	CalcStack->top=NULL;
-	STACK->top=NULL;
-	clrscr();
+	OpStack * MathStack;		//OpStack 타입의 포인터 변수 MathStack을 선언
 
-	if (argc!=2)
+	FILE *filePtr;			//파일을 다루기 위한 파일 포인터 filePtr을 선언
+
+	PostfixStack * CalcStack;	//PostfixStack 타입의 포인터 변수 CalcStack을 선언
+
+	int resultVal;			//정수형 변수 resultVal을 선언
+
+	Stack * STACK;			//Stack 타입의 포인터 변수 STACK을 선언
+
+	int curLine=0;			//정수형 변수 curLine을 0으로 초기화
+	int foundMain=0;		//정수형 변수 foundMain을 0으로 초기화
+        int WillBreak=0;		//정수형 변수 WillBreak을 0으로 초기화
+
+
+	MathStack->top=NULL;		//MathStack가 가리키는 OpStack 구조체의 top 멤버를 NULL로 초기화
+	CalcStack->top=NULL;		//alcStack가 가리키는 PostfixStack 구조체의 top 멤버를 NULL로 초기화
+	STACK->top=NULL;		//STACK이 가리키는 Stack 구조체의 top 멤버를 NULL로 초기화
+	clrscr();			//화면을 지우는 함수인 clrscr()를 호출합니다. 화면을 지워서 콘솔을 깨끗한 상태로 초기화
+
+	if (argc!=2)			// 만약 커맨드 라인 인수의 개수가 2개가 아니면 다음을 수행
 	{
 		/* if argument count is =1 */
-		printf("Incorrect arguments!\n");
-		printf("Usage: %s <inputfile.spl>",argv[0]);
-		return 1;
+		printf("Incorrect arguments!\n");		//오류 메시지를 출력하고, 정확한 사용법을 사용자에게 알려주는 메시지를 출력
+		printf("Usage: %s <inputfile.spl>",argv[0]);	//argv는 커맨드 라인 인수를 저장하는 문자열 배열입니다. argv[0]는 프로그램의 이름
+		return 1;					//프로그램을 1로 종료
 	}
 
 
@@ -306,20 +306,23 @@ int main(int argc,char ** argv)							//C 프로그램의 시작점인 main 함�
 
 	/* open the file */
 
-	if ( ( filePtr=fopen(argv[1],"r") ) == NULL )
-	{
-		printf("Can't open %s. Check the file please",argv[1]);
-		return 2;
+	if ( ( filePtr=fopen(argv[1],"r") ) == NULL )				//fopen(argv[1], "r")은 argv[1]에 지정된 파일을 읽기 모드로 열려고 시도,argv[1]은 커맨드 라인 인수로 받은 파일의 경로를 나타냄
+										//fopen 함수가 파일을 성공적으로 열면 파일 포인터를 반환하고, 열지 못하면 NULL을 반환
+	{									//파일 포인터 filePtr가 NULL인 경우 실행
+		printf("Can't open %s. Check the file please",argv[1]);		//오류 메시지를 출력하고, 파일 이름을 포함한 오류 메시지를 출력한 후
+		return 2;							//프로그램을 2로 종료
 	}
 
 
 	while (!feof(filePtr))
+		// 파일 끝까지 반복적으로 실행
 	{
 
 		int k=0;
 
-		fgets(line,4096,filePtr); /* read the file by Line by Line */
+		fgets(line,4096,filePtr); /* read the file by Line by Line */ // 파일을 한 줄씩 읽어옴
 		/* scan for /t characters. get rid of them! */
+		// 탭 문자를 공백으로 변환
 		while(line[k]!='\0')
 		{
 		 if (line[k]=='\t')
@@ -329,10 +332,10 @@ int main(int argc,char ** argv)							//C 프로그램의 시작점인 main 함�
 
 		 k++;
 		}
-
+		// lineyedek 배열에 현재 줄(line)을 복사
 		strcpy(lineyedek,line);
 
-		curLine++;
+		curLine++;	// 현재 라인 번호 증가
 		tempNode.val=-999;
 		tempNode.exp_data=' ';
 		tempNode.line=-999;
@@ -341,22 +344,26 @@ int main(int argc,char ** argv)							//C 프로그램의 시작점인 main 함�
 
 
 		if (!strcmpi("begin\n",line) | !strcmpi("begin",line))
+			// "begin" 키워드를 찾은 경우
 		{
 			if (foundMain)
+				// main 함수 내부에서 "begin"을 찾은 경우
 			{
-				tempNode.type=4;
-				STACK=Push(tempNode,STACK);
+				tempNode.type=4;	// 4는 어떤 의미를 가질 수 있음 (프로그램 내부 규칙에 따라)
+				STACK=Push(tempNode,STACK);	// 스택에 데이터를 푸시
 			}
 		}
 		else if (!strcmpi("end\n",line) | !strcmpi("end",line) )
+			// "end" 키워드를 찾은 경우
 		{
 			if (foundMain)
+				// main 함수 내부에서 "end"를 찾은 경우
 			{
 				int sline;
 
 
-				tempNode.type=5;
-				STACK=Push(tempNode,STACK);
+				tempNode.type=5;		// 5는 어떤 의미를 가질 수 있음 (프로그램 내부 규칙에 따라)
+				STACK=Push(tempNode,STACK);	// 스택에 데이터를 푸시
 
 				sline=GetLastFunctionCall(STACK);
 				if (sline==0)

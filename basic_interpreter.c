@@ -223,24 +223,32 @@ return 0;
  //printf를 사용하여 스택 내부의 데이터를 출력합니다.
 	printf("\n------------------\n");
 	printf("dumping the stack...\n");
+//Pop 함수를 사용하여 스택에서 데이터를 팝
 	Pop(&tempNode,stck);
+ //출력된 데이터의 필드(exp_data, type, val, line)는 형식화되어 출력
 	printf("exp=%c type=%d val=%d 	line=%d\n",tempNode.exp_data,tempNode.type,tempNode.val,tempNode.line);
+ //while 루프를 사용하여 스택이 비어 있지 않은 동안 반복하여 데이터를 팝하고 출력
 	while( (stck->top!=NULL) ) {
 		Pop(&tempNode,stck);
 		printf("exp=%c type=%d val=%d 				line=%d\n",tempNode.exp_data,tempNode.type,tempNode.val,tempNode.line);
 	}
 } */
 
-int Priotry(char operator)
+int Priotry(char operator)							//Priority 함수는 주어진 연산자의 우선순위를 결정함, char 형식의 연산자를 인자로 받음
 {
+	// if 문: 주어진 연산자가 '+' 또는 '-'인 경우
 	if ((operator=='+') | (operator=='-'))
+		// 반환문: 1을 반환하여 연산자의 우선순위를 1로 표시합니다.
 		return 1;
+	// else if 문: 주어진 연산자가 '/' 또는 '*'인 경우
 	else if ((operator=='/') | (operator=='*'))
+		// 반환문: 2를 반환하여 연산자의 우선순위를 2로 표시합니다.
 		return 2;
+// 반환문: 위의 조건에 해당하지 않는 경우, 0을 반환하여 기본 우선순위를 나타냅니다.
 return 0;
 }
 
-int main(int argc,char ** argv)
+int main(int argc,char ** argv)							//C 프로그램의 시작점인 main 함수, 이 함수는 커맨드 라인 매개변수(argc, argv)를 사용하여 실행됨
 {
 	char line[4096];
 	char dummy[4096];

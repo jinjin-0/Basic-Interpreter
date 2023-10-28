@@ -1,22 +1,22 @@
-function g(int y)
+function g(int y)			// 함수 g(int y) 정의
 begin
-  (1+2-3+y);   
+  (1+2-3+y);   				// 1 + 2 - 3 + y 수식 계산
 end
 
-function f(int x)
+function f(int x)			// 함수 f(int x) 정의
 begin
-   int b = 1;
-   int c = 2;
-   if ( b > (b+c))
-   	((b*c)+g(x));
-   if ( c > b )
-	(1+g(x));
+   int b = 1;				// 정수 변수 b를 1로 초기화
+   int c = 2;				// 정수 변수 c를 2로 초기화
+   if ( b > (b+c))			// 만약 b가 (b + c)보다 크다면
+   	((b*c)+g(x));			// (b * c) + g(x) 수식 계산
+   if ( c > b )				// 만약 c가 b보다 크다면
+	(1+g(x));			// 1 + g(x) 수식 계산
 end
 
-function main()
+function main()				// 함수 main() 정의
 begin
-   int k = 1;
-   int t = 2;
-   int x = 3;
-   ((2 + f(x) ) - k);
+   int k = 1;				// 정수 변수 k를 1로 초기화
+   int t = 2;				// 정수 변수 t를 2로 초기화
+   int x = 3;				// 정수 변수 x를 3로 초기화
+   ((2 + f(x) ) - k);			// (2 + f(x)) - k 수식 계산
 end

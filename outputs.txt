@@ -5,3 +5,4 @@ input2.spl ->7
 input3.spl ->7
 input4.spl ->5
 
+/* 각각의 input.spl 예제파일 main 함수에 대한 결과값으로 main 함수가 실행되고 스크립트가 수행된 결과를 나타내는 txt파일이다. */

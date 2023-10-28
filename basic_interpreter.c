@@ -375,15 +375,17 @@ int main(int argc,char ** argv)		//C 프로그램의 시작점인 main 함수, �
 					LastFunctionReturn=LastExpReturn;
 					/* get to the last line that have been a function calling */	 // 파일을 다시 열고 해당 라인까지 이동
 
-						fclose(filePtr);
-							filePtr=fopen(argv[1],"r");
-							curLine=0;
+						fclose(filePtr);					// 현재 열려있는 파일을 닫기
+							filePtr=fopen(argv[1],"r");			// 새로운 파일을 읽기 모드("r")로 엽니다. argv[1]은 커맨드 라인에서 전달된 파일 경로를 가리킴
+							curLine=0;					// 라인 번호를 초기화
 							/* file reversed to start postion */
 							/* now go codeline lines to go, to the functions line */
+							/* 파일을 역방향으로 되돌립니다. */
+							/* 함수의 라인으로 이동하기 위해 codeline 라인만큼 앞으로 이동합니다. */
 							for(j=1;j<sline;j++)
 							{
-								fgets(dummy,4096,filePtr); /* read the file by Line by Line */
-								curLine++;
+								fgets(dummy,4096,filePtr);	// 파일을 한 줄씩 읽어서 dummy 변수에 저장
+								curLine++;			// 현재 라인 번호를 증가
 							}
 
 
@@ -396,17 +398,13 @@ int main(int argc,char ** argv)		//C 프로그램의 시작점인 main 함수, �
 								foundCall=1;
 							}
 						}
-
 				}
-
-
 			}
 		}
 		else
 		{
 			//we need to tokinize	// 변수 또는 함수 정의 라인 처리
 			firstword=strtok(line," ");
-
 
 			if (!strcmpi("int",firstword))
 			{
@@ -513,10 +511,8 @@ int main(int argc,char ** argv)		//C 프로그램의 시작점인 main 함수, �
 							{
 								/* lower presedence for example / > + */
 								/* push to stack */
-
 								MathStack=PushOp(lineyedek[i],MathStack);
 							}
-
 						}
 					}
 					else if (isalpha(lineyedek[i])>0)
@@ -584,7 +580,6 @@ int main(int argc,char ** argv)		//C 프로그램의 시작점인 main 함수, �
 				/* get out items left in the mathstack */
 				while (isStackEmpty(MathStack)==0)
 				{
-
 					/* add the poped operator to the postfix */ 
 					// 남은 항목을 MathStack에서 가져와서 후위 표기식에 추가
 					postfix[y]=PopOp(MathStack);
@@ -634,7 +629,6 @@ int main(int argc,char ** argv)		//C 프로그램의 시작점인 main 함수, �
 	}
 
 	fclose(filePtr);	// 파일을 닫기
-
 	//printAllStack(STACK);	// 주석 처리된 코드, 스택의 내용을 출력하는 함수를 호출
 	STACK=FreeAll(STACK);	// 스택 메모리를 해제하고 스택을 초기화
 
@@ -736,8 +730,6 @@ Node * head;
 					return -1;		 // 함수 호출인 경우 -1을 반환
 					/* it's a function so return -1 */
 				}
-
-
 		}
 	}
 	return -999;	// 변수나 함수 호출이 발견되지 않으면 -999를 반환

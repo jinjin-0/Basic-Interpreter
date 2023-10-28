@@ -332,43 +332,39 @@ int main(int argc,char ** argv)		//C 프로그램의 시작점인 main 함수, �
 
 		 k++;
 		}
-		// lineyedek 배열에 현재 줄(line)을 복사
-		strcpy(lineyedek,line);
+		
+		strcpy(lineyedek,line);		// lineyedek 배열에 현재 줄(line)을 복사
 
 		curLine++;	// 현재 라인 번호 증가
-		tempNode.val=-999;
+
+		// 임시 노드(tempNode)를 초기화합니다
+		tempNode.val=-999;		
 		tempNode.exp_data=' ';
 		tempNode.line=-999;
 		tempNode.type=-999;
 
 
-
+	`	// "begin" 또는 "begin\n"을 찾았을 때
 		if (!strcmpi("begin\n",line) | !strcmpi("begin",line))
-			// "begin" 키워드를 찾은 경우
 		{
 			if (foundMain)
-				// main 함수 내부에서 "begin"을 찾은 경우
 			{
-				tempNode.type=4;	// 4는 어떤 의미를 가질 수 있음 (프로그램 내부 규칙에 따라)
-				STACK=Push(tempNode,STACK);	// 스택에 데이터를 푸시
+				tempNode.type=4;	//"begin"을 나타내는 타입 코드를 할당
+				STACK=Push(tempNode,STACK);	// 스택에 노드를 푸시
 			}
 		}
+		// "end" 또는 "end\n"을 찾았을 때
 		else if (!strcmpi("end\n",line) | !strcmpi("end",line) )
-			// "end" 키워드를 찾은 경우
 		{
 			if (foundMain)
-				// main 함수 내부에서 "end"를 찾은 경우
 			{
 				int sline;
-
-
-				tempNode.type=5;		// 5는 어떤 의미를 가질 수 있음 (프로그램 내부 규칙에 따라)
-				STACK=Push(tempNode,STACK);	// 스택에 데이터를 푸시
-
-				sline=GetLastFunctionCall(STACK);
+				tempNode.type=5;			// "end"를 나타내는 타입 코드를 할당
+				STACK=Push(tempNode,STACK);		// 스택에 노드를 푸시
+				sline=GetLastFunctionCall(STACK);	// 이전 함수 호출 라인을 찾습니다
 				if (sline==0)
 				{
-					/* WE FOUND THE RESULT! */
+					/* WE FOUND THE RESULT! */	// 결과를 찾았을 때
 					printf("Output=%d",LastExpReturn);
 
 				}
@@ -377,7 +373,7 @@ int main(int argc,char ** argv)		//C 프로그램의 시작점인 main 함수, �
 					int j;
 					int foundCall=0;
 					LastFunctionReturn=LastExpReturn;
-					/* get to the last line that have been a function calling */
+					/* get to the last line that have been a function calling */	 // 파일을 다시 열고 해당 라인까지 이동
 
 						fclose(filePtr);
 							filePtr=fopen(argv[1],"r");
@@ -391,7 +387,7 @@ int main(int argc,char ** argv)		//C 프로그램의 시작점인 main 함수, �
 							}
 
 
-						/* clear all the stack up to the last function call */
+						/* clear all the stack up to the last function call */// 함수 호출과 관련된 스택 처리
 						while(foundCall==0)
 						{
 							Pop(&tempNode,STACK);
@@ -408,7 +404,7 @@ int main(int argc,char ** argv)		//C 프로그램의 시작점인 main 함수, �
 		}
 		else
 		{
-			//we need to tokinize
+			//we need to tokinize	// 변수 또는 함수 정의 라인 처리
 			firstword=strtok(line," ");
 
 
@@ -416,39 +412,39 @@ int main(int argc,char ** argv)		//C 프로그램의 시작점인 main 함수, �
 			{
 				if (foundMain)
 				{
-					tempNode.type=1; /*integer*/
+					// 정수형 변수 처리
+					tempNode.type=1;  // integer를 나타내는 타입 코드를 할당
 					firstword=strtok(NULL," ");
 					tempNode.exp_data=firstword[0];
 
 
 					firstword=strtok(NULL," ");
 
-					/* check for = */
-					if (!strcmpi("=",firstword))
+					/* check for = */ 
+					if (!strcmpi("=",firstword))	// "=" 검사
 					{
 						firstword=strtok(NULL," ");
 					}
 
 					tempNode.val=atoi(firstword);
 					tempNode.line=0;
-					STACK=Push(tempNode,STACK);
+					STACK=Push(tempNode,STACK);  	// 스택에 노드를 푸시
 				}
 			}
 			else if (!strcmpi("function",firstword))
 			{
-				tempNode.type=2;
+				// 함수 정의 처리
+				tempNode.type=2;	// 함수를 나타내는 타입 코드를 할당
 				firstword=strtok(NULL," ");
 				tempNode.exp_data=firstword[0];
 				tempNode.line=curLine;
 				tempNode.val=0;
-				STACK=Push(tempNode,STACK);
+				STACK=Push(tempNode,STACK);	// 스택에 노드를 푸시
 
 				if ( (firstword[0]=='m') & (firstword[1]=='a') & (firstword[2]=='i') & (firstword[3]=='n') )
 				{
 					/*printf("Found function main() in line %d. Starting to running the script...\n",curLine);*/
-					foundMain=1;
-
-
+					foundMain=1; 		// main 함수를 찾았을 때 플래그를 설정
 				}
 				else
 				{
@@ -459,36 +455,22 @@ int main(int argc,char ** argv)		//C 프로그램의 시작점인 main 함수, �
 						tempNode.exp_data=firstword[0];
 						tempNode.val=CalingFunctionArgVal;
 						tempNode.line=0;
-						STACK=Push(tempNode,STACK);
-
-
-
+						STACK=Push(tempNode,STACK);	// 스택에 노드를 푸시
 					}
-
 				}
-
-
 			}
 			else if (firstword[0]=='(')
 			{
-
 			if (foundMain)
 				{
-
 				int i=0;
 				int y=0;
-
-
 				MathStack->top=NULL;
 				/* now make the postfix calculcation */
 
-
-
-
-
-				while(lineyedek[i]!='\x0')
+				while(lineyedek[i]!='\x0')	// 후위 표기식 계산
 				{
-					/* evulate the function */
+					/* evulate the function */	// 숫자 처리
 					if (isdigit(lineyedek[i])) {
 						postfix[y]=lineyedek[i];
 						y++;
@@ -508,7 +490,7 @@ int main(int argc,char ** argv)		//C 프로그램의 시작점인 main 함수, �
 					}
 					else if ((lineyedek[i]=='+') | (lineyedek[i]=='-') | (lineyedek[i]=='*') | (lineyedek[i]=='/'))
 					{
-						/*operators*/
+						/*operators*/	// 연산자 처리
 						if (isStackEmpty(MathStack))
 						{
 					/* if stack empty push the operator to stack */
@@ -517,20 +499,15 @@ int main(int argc,char ** argv)		//C 프로그램의 시작점인 main 함수, �
 						}
 						else
 						{
-							/* check for presedence */
+							/* check for presedence */ 
 							if (Priotry(lineyedek[i]) <= Priotry(MathStack->top->op) )
 							{
 								/* higher presedence for example + < *  */
 								/* pop the last operator */
-
 								/* add the poped operator to the postfix */
 								postfix[y]=PopOp(MathStack);
 								y++;
-
-
 								MathStack=PushOp(lineyedek[i],MathStack);
-
-
 							}
 							else
 							{
@@ -551,30 +528,27 @@ int main(int argc,char ** argv)		//C 프로그램의 시작점인 main 함수, �
 						retVal=GetVal(lineyedek[i],&codeline,STACK);
 						if ((retVal!=-1) & (retVal!=-999))
 						{
-							/* if variable */
+							/* if variable */ // 변수 처리
 							postfix[y]=retVal+48; /* in ascii table numeric values start from 48 */
 							y++;
-
 						}
 						else
 						{
-
 						    if (LastFunctionReturn==-999)
 						    {
-
-							/* if function */
+							/* if function */ // 함수 호출 처리
 							/* add to our system stack that we are making a call to function */
 							int j;
 							tempNode.type=3;
 							tempNode.line=curLine;
 							STACK=Push(tempNode,STACK);
 
-							/* get function's arguments value */
+							/* get function's arguments value */ 
 							CalingFunctionArgVal=GetVal(lineyedek[i+2],&dummyint,STACK);
 
 
 
-							fclose(filePtr);
+							fclose(filePtr); // 파일을 다시 열고 해당 라인까지 이동
 							filePtr=fopen(argv[1],"r");
 							curLine=0;
 							/* file reversed to start postion */
@@ -584,65 +558,60 @@ int main(int argc,char ** argv)		//C 프로그램의 시작점인 main 함수, �
 /* !!!!!!!!!!!!!!! j <= codeline olabilir */
 							for(j=1;j<codeline;j++)
 							{
+								// 파일을 줄 단위로 읽어오기
 								fgets(dummy,4096,filePtr); /* read the file by Line by Line */
 								curLine++;
 							}
 
-							WillBreak=1;
+							WillBreak=1;	// 이 플래그를 설정하여 현재 루프를 중지하고 나중에 이어서 실행
 							break;
 						    }
 						    else
-
 						    {
-
-
+							// 이전 함수 호출 결과를 사용
+							// 숫자를 문자로 변환해서 후위 표기식에 추가
 							postfix[y]=LastFunctionReturn+48; /* in ascii table numeric values start from 48 */
 							y++;
-							i=i+3;
-							LastFunctionReturn=-999;
-
-
+							i=i+3;				// i를 3 증가시켜서 함수 호출 표기부분을 넘어가기
+							LastFunctionReturn=-999;	// 이전 함수 호출 결과를 초기화
 						    }
 						}
 					}
-
 					i++;
 				}
-
 				if (WillBreak==0)
 				{
 				/* get out items left in the mathstack */
 				while (isStackEmpty(MathStack)==0)
 				{
 
-					/* add the poped operator to the postfix */
+					/* add the poped operator to the postfix */ 
+					// 남은 항목을 MathStack에서 가져와서 후위 표기식에 추가
 					postfix[y]=PopOp(MathStack);
 					y++;
 				}
 
-				postfix[y]='\0';
+				postfix[y]='\0';	// 후위 표기식 문자열을 종료
 
 				//MathStack=FreeAll(MathStack);
 
 				/* now calculate the postfix */
 				/*printf("\nCURRENT POSTFIX=%s\n",postfix);*/
-
-				i=0;
-
+				// 후위 표기식을 계산
+				int i=0;
 				CalcStack->top=NULL;
 				while(postfix[i]!='\x0')
 				{
 					if (isdigit(postfix[i])) {
-						/* push to stack */
+						/* push to stack */ // 숫자인 경우 스택에 푸시
 						CalcStack=PushPostfix(postfix[i]-'0',CalcStack);
 					}
 					else if ((postfix[i]=='+') | (postfix[i]=='-') | (postfix[i]=='*') | (postfix[i]=='/'))
-					{
+					{]
+						// 연산자인 경우 스택에서 숫자를 팝하여 계산하고 결과를 스택에 푸시
 						val1=PopPostfix(CalcStack);
-
 						val2=PopPostfix(CalcStack);
-
-
+						
 						switch (postfix[i])
 						{
 							case '+': resultVal=val2+val1;break;
@@ -650,140 +619,126 @@ int main(int argc,char ** argv)		//C 프로그램의 시작점인 main 함수, �
 							case '/': resultVal=val2/val1;break;
 							case '*': resultVal=val2*val1;break;
 						}
-
+						// 최종 계산 결과를 LastExpReturn에 저장
 						CalcStack=PushPostfix(resultVal,CalcStack);
 					}
 					i++;
 				}
-
-				//CalcStack=FreeAll(CalcStack);
-				LastExpReturn=CalcStack->top->val;
-
-
+				//CalcStack=FreeAll(CalcStack); // 여기에서 후위 표기식이 계산
+				LastExpReturn=CalcStack->top->val ;
 				}
-				WillBreak=0;
+				WillBreak=0;	//WillBreak 플래그를 초기화
 				}
 			}
 		}
-
-
 	}
 
-	fclose(filePtr);
+	fclose(filePtr);	// 파일을 닫기
 
-	//printAllStack(STACK);
-	STACK=FreeAll(STACK);
+	//printAllStack(STACK);	// 주석 처리된 코드, 스택의 내용을 출력하는 함수를 호출
+	STACK=FreeAll(STACK);	// 스택 메모리를 해제하고 스택을 초기화
 
-	printf("\nPress a key to exit...");
-	getch();
-	return  0;
+	printf("\nPress a key to exit...");	// 화면에 메시지를 출력
+	getch();				// 사용자의 키 입력을 대기합니다.
+	return  0;				// 프로그램을 종료하고 0을 반환합니다.
 }
 
-Stack * FreeAll(Stack * stck)
+Stack * FreeAll(Stack * stck)		//FreeAll함수는 스택을 메모리에서 해제하고 스택 포인터를 초기화하는 역할을 함
 {
 Node * temp;
 Node * head;
 
-	if (stck->top != NULL )
+	if (stck->top != NULL )		// 스택의 맨 위 노드를 가리키는 포인터를 head로 설정
 	{
 		head=stck->top;
 		do
 		{
-
-			temp=head;
-			head=head->next;
-			free(temp);
-
-		} while (head->next!=NULL);
+			temp=head; 	// 현재 노드를 temp에 저장
+			head=head->next;// 다음 노드로 이동
+			free(temp);	// 현재 노드를 메모리에서 해제
+		} while (head->next!=NULL);	// 스택의 끝까지 반복
 	}
-
-return NULL;
+return NULL;					// 스택을 모두 해제하고 포인터를 초기화하고 NULL을 반환
 }
-int GetLastFunctionCall(Stack *stck)
+
+int GetLastFunctionCall(Stack *stck)		//GetLastFunctionCall함수는 스택에서 마지막 함수 호출의 라인 번호를 검색
 {
 Node * head;
 
 	if (stck->top == NULL )
 	{
-		printf("ERROR, empty stack...");
+		printf("ERROR, empty stack...");	// 에러 메시지를 출력하고 스택이 비어있을 때 -1을 반환
 	}
 	else
 	{
-		head=stck->top;
+		head=stck->top;				// 스택의 맨 위 노드를 가리키는 포인터를 head로 설정
 		do
 		{
-			if ( head->type==3 )
+			if ( head->type==3 )	
 			{
-				return head->line;
+				return head->line;	// 스택에서 마지막으로 발견된 함수 호출의 라인 번호를 반환
 			}
 			else
 			{
-				head=head->next;
+				head=head->next;	// 다음 노드로 이동
 			}
-		} while (head->next!=NULL);
+		} while (head->next!=NULL);		// 스택의 끝까지 반복
 	}
-
-	return 0;
-
-
-
+	return 0;					// 함수 호출이 발견되지 않으면 0을 반환
 }
-
-int GetVal(char exp_name,int * line,Stack *stck)
-{
-
+int GetVal(char exp_name,int * line,Stack *stck)	//etVal 함수는 스택에서 변수 또는 함수 호출의 값을 가져오는 역할을 함
+{							//exp_name: 가져올 변수 또는 함수 호출의 이름, line: 함수 호출의 경우 함수의 라인 번호를 저장하는 포인터
 Node * head;
-*line=0;
+*line=0;						// line 변수를 0으로 초기화
 	if (stck->top == NULL )
 	{
-		printf("ERROR, empty stack...");
+		printf("ERROR, empty stack..."); 	// 에러 메시지를 출력하고 스택이 비어있을 때 -1을 반환
 	}
 	else
 	{
-		head=stck->top;
+		head=stck->top;				// 스택의 맨 위 노드를 가리키는 포인터를 head로 설정
 		do
 		{
 			if ( head->exp_data==exp_name )
 			{
-
+		
 				if (head->type==1)
 				{
 					/* return the variables value */
+					/* 변수인 경우 변수의 값을 반환합니다. */
 					return head->val;
 				}
 				else if (head->type==2)
 				{
-					*line=head->line;
-					return -1;
+					*line=head->line;	// 함수 호출인 경우 함수의 라인 번호를 설정
+					return -1;		// 함수 호출인 경우 -1을 반환
 					/* it's a function so return -1 */
 				}
-
 			}
 			else
 			{
-				head=head->next;
+				head=head->next;		// 다음 노드로 이동
 			}
-		} while (head->next!=NULL);
-		/* check agin once more */
+		} while (head->next!=NULL);			// 스택의 끝까지 반복
+		/* check agin once more */	/* 한 번 더 확인 */
 		if (head->exp_data==exp_name)
 		{
 
 				if (head->type==1)
 				{
 					/* return the variables value */
+					/* 변수인 경우 변수의 값을 반환합니다. */
 					return head->val;
 				}
 				else if (head->type==2)
 				{
-					*line=head->line;
-					return -1;
+					*line=head->line;	// 함수 호출인 경우 함수의 라인 번호를 설정
+					return -1;		 // 함수 호출인 경우 -1을 반환
 					/* it's a function so return -1 */
 				}
 
 
 		}
 	}
-
-	return -999;
+	return -999;	// 변수나 함수 호출이 발견되지 않으면 -999를 반환
 }
-
